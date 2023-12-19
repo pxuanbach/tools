@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2019-CU14-ubuntu-20.04
+    restart: always
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "PassW0rd"
+      MSSQL_PID: "Express"
+    ports:
+      - 14333:1433
+    volumes:
+      - mssql-data:/var/opt/mssql
+
+  redis:
+    image: redis:alpine3.18
+    restart: always
+    ports:
+      - 6379:6379
+    
+volumes:
+  mssql-data:
+    
