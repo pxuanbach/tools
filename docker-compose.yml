@@ -2,8 +2,39 @@ version: "3.8"
 
 services:
   mssql:
-    image: mcr.microsoft.com/mssql/server:2019-CU14-ubuntu-20.04
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "PassW0rd"
+      MSSQL_PID: "Express"
+    ports:
+      - 1433:1433
+    volumes:
+      - ./mssql/data/:/var/opt/mssql/data/
+      - ./mssql/log/:/var/opt/mssql/log/
+      - ./mssql/secrets/:/var/opt/mssql/secrets/
+
+  mongo:
+    image: mongo:6.0-jammy
+    restart: unless-stopped
+    ports:
+      - 27018:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 111111
+    volumes:
+      - ./mongo:/data/db
+
+  redis:
+    image: redis:alpine3.18
     restart: always
+    ports:
+      - 6379:6379
+
+  jet-freight-mssql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    restart: unless-stopped
     environment:
       ACCEPT_EULA: "Y"
       SA_PASSWORD: "PassW0rd"
@@ -11,14 +42,15 @@ services:
     ports:
       - 14333:1433
     volumes:
-      - mssql-data:/var/opt/mssql
-
-  redis:
-    image: redis:alpine3.18
-    restart: always
+      - ./jf-mssql/data/:/var/opt/mssql/data/
+      - ./jf-mssql/log/:/var/opt/mssql/log/
+      - ./jf-mssql/secrets/:/var/opt/mssql/secrets/
+  
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
     ports:
-      - 6379:6379
-    
-volumes:
-  mssql-data:
-    
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ./rabbitmq/data/:/var/lib/rabbitmq/
+      - ./rabbitmq/log/:/var/log/rabbitmq
