@@ -10,11 +10,6 @@ services:
       - MYSQL_USER=bn_wordpress
       - MYSQL_PASSWORD=1
       - MYSQL_DATABASE=giant
-    entrypoint:
-      sh -c "
-        echo 'CREATE DATABASE IF NOT EXISTS vesta;' > /docker-entrypoint-initdb.d/init.sql;
-        /usr/local/bin/docker-entrypoint.sh --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-      "
 
   giant_wp:
     image: wordpress:6.4.2-php8.1-apache
